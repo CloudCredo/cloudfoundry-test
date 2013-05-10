@@ -44,7 +44,7 @@ class EnvironmentVariables {
                 if(environment.containsKey(key)) {
                     EnvironmentVariables.this.remove(key);
                 }
-                log.trace("Removing environment variable: " + key + " " + value);
+                log.debug("Adding environment variable: " + key + " " + value);
                 environment.put(key, value);
             }
         });

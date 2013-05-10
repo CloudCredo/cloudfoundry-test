@@ -22,7 +22,7 @@ import java.util.concurrent.*;
  * @date: 05/04/2013
  */
 @RunWith(CloudFoundryJUnitClassRunner.class)
-@ContextConfiguration("classpath:META-INF/amqp/rabbit-context.xml")
+@ContextConfiguration("classpath:META-INF/cf-test/rabbit-context.xml")
 @RabbitMQCloudFoundryService
 public class RabbitMQCloudFoundryServiceTest {
 

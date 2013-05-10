@@ -9,6 +9,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -84,7 +85,7 @@ class NatsCloudFoundryServicesClient {
                                     + service.serviceNode);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.warn("Not yet Received Credentials: " + message.getSubject());
                     }
 
                 }
@@ -104,6 +105,7 @@ class NatsCloudFoundryServicesClient {
         try {
             newService(serviceName, service.serviceName);
             latch.await(5000, TimeUnit.MILLISECONDS);
+            //Thread.sleep(50000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +137,21 @@ class NatsCloudFoundryServicesClient {
             log.warn("Service " + serviceName + " already exists. Deleting existing service. All existing data will be lost");
             cloudFoundryClient.deleteService(cloudService.getName());
         }
-        cloudFoundryClient.createService(cloudService);
+        newService(cloudFoundryClient, cloudService);
+    }
+
+    /*
+     * Rudimentary retry to catch service gateway 502 errors.
+     */
+    private void newService(CloudFoundryClient cloudFoundryClient, CloudService cloudService) {
+        for (int i = 0; i < 3; i++) {
+            try {
+                cloudFoundryClient.createService(cloudService);
+                return;
+            } catch (HttpServerErrorException e) {
+                log.warn("Encountered 502 Bad Gateway error. Will try again");
+            }
+        }
     }
 
     /**
@@ -143,6 +159,7 @@ class NatsCloudFoundryServicesClient {
      * @param serviceName
      * @param serviceType        to create  @return a CloudService for rabbitMq
      */
+
     private CloudService getCloudService(CloudFoundryClient cloudFoundryClient, String serviceName, String serviceType) {
         ServiceConfiguration serviceConfiguration = getServiceConfiguration(cloudFoundryClient, serviceType);
         CloudService cloudService = new CloudService(serviceConfiguration.getMeta(), serviceType);

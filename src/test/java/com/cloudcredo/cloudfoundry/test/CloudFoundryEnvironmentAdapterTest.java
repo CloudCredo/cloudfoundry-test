@@ -5,6 +5,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: chris
  * @date: 29/04/2013
@@ -26,7 +29,9 @@ public class CloudFoundryEnvironmentAdapterTest {
     @Test
     public void shouldSetRabbitMq() {
         Credentials testCredentials = getTestCredentials();
-        unit.addVcapServicesForRabbitMq(testCredentials);
+        Map<CloudFoundryService, Credentials> t = new HashMap<CloudFoundryService, Credentials>();
+        t.put(CloudFoundryService.RABBITMQ, testCredentials);
+        unit.addVcapServices(t);
         String actual = System.getenv().get("VCAP_SERVICES");
         Assertions.assertThat(actual).isEqualTo(expectedJson(testCredentials, "rabbitmq-2.4", "rabbitmq"));
     }
@@ -34,7 +39,9 @@ public class CloudFoundryEnvironmentAdapterTest {
     @Test
     public void shouldSetRedis() {
         Credentials testCredentials = getTestCredentials();
-        unit.addVcapServicesForRedis(testCredentials);
+        Map<CloudFoundryService, Credentials> t = new HashMap<CloudFoundryService, Credentials>();
+        t.put(CloudFoundryService.REDIS, testCredentials);
+        unit.addVcapServices(t);
         String actual = System.getenv().get("VCAP_SERVICES");
         System.out.println(testCredentials);
         Assertions.assertThat(actual).isEqualTo(expectedJson(testCredentials, "redis-1.8", "redis"));

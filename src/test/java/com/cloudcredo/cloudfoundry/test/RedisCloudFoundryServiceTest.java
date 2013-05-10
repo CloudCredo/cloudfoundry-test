@@ -15,7 +15,7 @@ import java.util.UUID;
  * @date: 05/05/2013
  */
 @RunWith(CloudFoundryJUnitClassRunner.class)
-@ContextConfiguration("classpath:META-INF/amqp/redis-context.xml")
+@ContextConfiguration("classpath:META-INF/cf-test/redis-context.xml")
 @RedisCloudFoundryService
 public class RedisCloudFoundryServiceTest {
 

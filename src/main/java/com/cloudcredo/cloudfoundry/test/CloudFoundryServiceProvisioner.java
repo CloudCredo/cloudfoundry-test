@@ -5,6 +5,9 @@ import com.cloudcredo.cloudfoundry.test.annotation.RedisCloudFoundryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Simple Object that delegates to an an instance of Cloud Foundry, creates the required service and set the environment
  * variable for the Java process.
@@ -26,13 +29,12 @@ public class CloudFoundryServiceProvisioner {
      * Creates a RabbitMQ service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment
      * variables as required by Spring for auto-connect functionality.
      */
-    void createRabbitMqService() {
+    private Credentials createRabbitMqService() {
         try {
             log.info("Creating new RabbitMQ Cloud Foundry Service");
-            Credentials rabbitmqCredentials = natsCloudFoundryServicesClient.getCredentialsForNewService("rabbit-test", CloudFoundryService.RABBITMQ);
-            cloudFoundryEnvironmentAdapter.addVcapServicesForRabbitMq(rabbitmqCredentials);
+            return natsCloudFoundryServicesClient.getCredentialsForNewService("rabbit-test", CloudFoundryService.RABBITMQ);
         } catch (InterruptedException e) {
-            e.printStackTrace();  //TODO Handle this exception
+            throw new RuntimeException("Cannot Create RabbitMQ Service");
         }
     }
 
@@ -40,13 +42,12 @@ public class CloudFoundryServiceProvisioner {
      * Creates a Redis service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment variables
      * as required by Spring for auto-connect functionality.
      */
-    void createRedisService() {
+    private Credentials createRedisService() {
         try {
             log.info("Creating new Redis Cloud Foundry Service");
-            Credentials redisCredentials = natsCloudFoundryServicesClient.getCredentialsForNewService("redis-test", CloudFoundryService.REDIS);
-            cloudFoundryEnvironmentAdapter.addVcapServicesForRedis(redisCredentials);
+            return natsCloudFoundryServicesClient.getCredentialsForNewService("redis-test", CloudFoundryService.REDIS);
         } catch (InterruptedException e) {
-            e.printStackTrace();  //TODO Handle this exception
+            throw new RuntimeException("Cannot Create Redis Service");
         }
     }
 
@@ -57,12 +58,15 @@ public class CloudFoundryServiceProvisioner {
      * @see com.cloudcredo.cloudfoundry.test.annotation
      */
     void createServicesForClass(Class clazz) {
+        Map<CloudFoundryService, Credentials> credentials = new HashMap<CloudFoundryService, Credentials>();
         if (clazz.isAnnotationPresent(RabbitMQCloudFoundryService.class)) {
-            createRabbitMqService();
+            credentials.put(CloudFoundryService.RABBITMQ, createRabbitMqService());
         }
 
         if (clazz.isAnnotationPresent(RedisCloudFoundryService.class)) {
-            createRedisService();
+            credentials.put(CloudFoundryService.REDIS, createRedisService());
         }
+
+        cloudFoundryEnvironmentAdapter.addVcapServices(credentials);
     }
 }
