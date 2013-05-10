@@ -16,13 +16,6 @@
         <jackson.version>1.9.8</jackson.version>
     </properties>
 
-   <distributionManagement>
-     <snapshotRepository>
-         <id>post-office</id>
-	 <url>http://nexus.postoffice.groupcdg.com/nexus/content/repositories/snapshots</url>
-       </snapshotRepository>
-   </distributionManagement>
-
     <repositories>
         <repository>
             <id>spring-release</id>

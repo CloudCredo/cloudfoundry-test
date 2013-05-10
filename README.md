@@ -4,13 +4,13 @@ The aim of this project is to provide test classes to make running integration t
 simpler.
 
 Currently running integration tests in any environment may entail manually setting up environments for tests
-to run against. This project takes away that pain by allowing inegration tests to create Cloud Foundry services,
+to run against. This project takes away that pain by allowing integration tests to create Cloud Foundry services,
 automatically bind to them, execute the tests and (optionally) tear down the services.
 
 
 ##Usage
 
-The tool requires a running instance of Cloud Foundry that is able to make it's servives public. Micro Cloud
+The tool requires a running instance of Cloud Foundry that is able to make it's services public. Micro Cloud
 Foundry is perfect for this as it requires no extra configuration. It may also be possible to run this against your
 private hosted instance of Cloud Foundry
 
