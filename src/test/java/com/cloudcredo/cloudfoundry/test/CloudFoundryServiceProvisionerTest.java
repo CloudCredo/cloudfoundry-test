@@ -1,6 +1,7 @@
 package com.cloudcredo.cloudfoundry.test;
 
 import org.fest.assertions.Assertions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +17,11 @@ public class CloudFoundryServiceProvisionerTest {
     public void before() {
         new EnvironmentVariables().remove("VCAP_SERVICES");
         unit = new CloudFoundryServiceProvisioner();
+    }
+
+    @After
+    public void after() {
+        new EnvironmentVariables().remove("VCAP_SERVICES");
     }
 
     @Test

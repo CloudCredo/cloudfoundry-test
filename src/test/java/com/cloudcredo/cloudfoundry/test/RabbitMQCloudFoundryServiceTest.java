@@ -1,11 +1,8 @@
-package com.cloudcredo.cloudfoundry.test.integration;
+package com.cloudcredo.cloudfoundry.test;
 
-import com.cloudcredo.cloudfoundry.test.CloudFoundryJUnitClassRunner;
 import com.cloudcredo.cloudfoundry.test.annotation.RabbitMQCloudFoundryService;
 import org.fest.assertions.Assertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Message;
@@ -48,7 +45,6 @@ public class RabbitMQCloudFoundryServiceTest {
         amqpAdmin.deleteQueue(ROUTE);
     }
 
-
     @Test
     public void exampleHandshake() throws InterruptedException, ExecutionException, TimeoutException {
 
@@ -77,5 +73,10 @@ public class RabbitMQCloudFoundryServiceTest {
 
         Object empty = (String) rabbitTemplate.receiveAndConvert(ROUTE);
         Assertions.assertThat(empty).isNull();
+    }
+
+    @Test
+    public void runTwice() throws InterruptedException, ExecutionException, TimeoutException {
+        this.exampleHandshake();
     }
 }

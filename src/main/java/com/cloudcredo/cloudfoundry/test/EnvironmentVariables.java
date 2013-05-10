@@ -1,5 +1,8 @@
 package com.cloudcredo.cloudfoundry.test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
@@ -13,6 +16,19 @@ import java.util.Map;
  */
 class EnvironmentVariables {
 
+    private static final Logger log = LoggerFactory.getLogger(EnvironmentVariables.class);
+
+    /**
+     *
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static String getEnv(String key, String defaultValue) {
+        String value = System.getenv().get(key);
+        return value == null ? defaultValue : value;
+    }
+
     /**
      * Hack to set the environment variable HashMap in the system class. Allows us to set the VCAP_SERVICES environment
      * variable that the AbstractServiceInfo classes require.
@@ -25,6 +41,10 @@ class EnvironmentVariables {
         execute(new Command() {
             @Override
             public void execute(Map<String, String> environment) {
+                if(environment.containsKey(key)) {
+                    EnvironmentVariables.this.remove(key);
+                }
+                log.trace("Removing environment variable: " + key + " " + value);
                 environment.put(key, value);
             }
         });
@@ -34,6 +54,7 @@ class EnvironmentVariables {
         execute(new Command() {
             @Override
             public void execute(Map<String, String> environment) {
+                log.trace("Removing environment variable: " + key);
                 environment.remove(key);
             }
         });

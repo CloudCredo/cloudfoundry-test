@@ -1,4 +1,4 @@
-package com.cloudcredo.cloudfoundry.test.integration;
+package com.cloudcredo.cloudfoundry.test;
 
 import java.io.Serializable;
 import java.util.UUID;

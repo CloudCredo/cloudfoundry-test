@@ -28,11 +28,15 @@ class NatsCloudFoundryServicesClient {
 
     private static final Logger log = LoggerFactory.getLogger(NatsCloudFoundryServicesClient.class);
 
+    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chris@cloudcredo.com");
+
+    private static final String CLOUD_FOUNDRY_PASSWORD = EnvironmentVariables.getEnv("cloud_foundry_password", "c1oudc0w");
+
     /** The Cloud Foundry Nats URL */
-    private final String NATS_URL = "nats://nats:nats@api.vcap.me:4222";
+    private final String NATS_URL = EnvironmentVariables.getEnv("mbus", "nats://nats:nats@api.vcap.me:4222");
 
     /** Cloud foundry Target */
-    private final String CLOUD_FOUNDRY_TARGET = "http://api.vcap.me";
+    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.vcap.me");
 
     /**
      * Connects to the instance of Cloud Foundry as defined in TargetUrl, creates a new service, constructs and returns
@@ -120,7 +124,7 @@ class NatsCloudFoundryServicesClient {
     private void newService(String serviceName, String serviceType) throws MalformedURLException {
         log.info("Requesting new Cloud Foundry service for " + serviceType);
         URL target = new URL(CLOUD_FOUNDRY_TARGET);
-        CloudCredentials cloudCredentials = new CloudCredentials("chris@cloudcredo.com", "Tqblxkf7");
+        CloudCredentials cloudCredentials = new CloudCredentials(CLOUD_FOUNDRY_EMAIL, CLOUD_FOUNDRY_PASSWORD);
         CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(cloudCredentials, target);
         cloudFoundryClient.login();
 

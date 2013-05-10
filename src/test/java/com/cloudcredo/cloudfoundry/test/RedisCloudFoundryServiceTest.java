@@ -1,6 +1,5 @@
-package com.cloudcredo.cloudfoundry.test.integration;
+package com.cloudcredo.cloudfoundry.test;
 
-import com.cloudcredo.cloudfoundry.test.CloudFoundryJUnitClassRunner;
 import com.cloudcredo.cloudfoundry.test.annotation.RedisCloudFoundryService;
 import org.junit.Assert;
 import org.junit.Test;

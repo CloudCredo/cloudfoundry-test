@@ -23,8 +23,8 @@ public class CloudFoundryServiceProvisioner {
     private NatsCloudFoundryServicesClient natsCloudFoundryServicesClient = new NatsCloudFoundryServicesClient();
 
     /**
-     * Creates a RabbitMQ service in the target instance of Cloud Foundry and sets the Redis credentials in the process
-     * environment variables as required by Spring for auto-connect functionality.
+     * Creates a RabbitMQ service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment
+     * variables as required by Spring for auto-connect functionality.
      */
     void createRabbitMqService() {
         try {
@@ -37,11 +37,12 @@ public class CloudFoundryServiceProvisioner {
     }
 
     /**
-     * Creates a Redis service in the target instance of Cloud Foundry and sets the Redis credentials in the process
-     * environment variables as required by Spring for auto-connect functionality.
+     * Creates a Redis service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment variables
+     * as required by Spring for auto-connect functionality.
      */
     void createRedisService() {
         try {
+            log.info("Creating new Redis Cloud Foundry Service");
             Credentials redisCredentials = natsCloudFoundryServicesClient.getCredentialsForNewService("redis-test", CloudFoundryService.REDIS);
             cloudFoundryEnvironmentAdapter.addVcapServicesForRedis(redisCredentials);
         } catch (InterruptedException e) {

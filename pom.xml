@@ -4,7 +4,7 @@
 
     <groupId>cloudfoundry-test</groupId>
     <artifactId>cloudfoundry-test</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>cloudfoundry-test</name>
@@ -15,6 +15,13 @@
         <org.springframework.amqp>1.1.4.RELEASE</org.springframework.amqp>
         <jackson.version>1.9.8</jackson.version>
     </properties>
+
+   <distributionManagement>
+     <snapshotRepository>
+         <id>post-office</id>
+	 <url>http://nexus.postoffice.groupcdg.com/nexus/content/repositories/snapshots</url>
+       </snapshotRepository>
+   </distributionManagement>
 
     <repositories>
         <repository>
@@ -27,15 +34,9 @@
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
             <version>4.8.2</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.easytesting</groupId>

@@ -1,6 +1,7 @@
 package com.cloudcredo.cloudfoundry.test;
 
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -18,9 +19,9 @@ public class CloudFoundryJUnitClassRunner extends SpringJUnit4ClassRunner {
     }
 
     @Override
-    protected Object createTest() throws Exception {
+    protected Statement withBeforeClasses(Statement statement) {
         createRequiredServices();
-        return super.createTest();
+        return super.withBeforeClasses(statement);
     }
 
     private void createRequiredServices() {
