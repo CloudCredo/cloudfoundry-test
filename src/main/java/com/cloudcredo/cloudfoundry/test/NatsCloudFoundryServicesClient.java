@@ -128,6 +128,7 @@ class NatsCloudFoundryServicesClient {
         URL target = new URL(CLOUD_FOUNDRY_TARGET);
         CloudCredentials cloudCredentials = new CloudCredentials(CLOUD_FOUNDRY_EMAIL, CLOUD_FOUNDRY_PASSWORD);
         CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(cloudCredentials, target);
+        log.info(CLOUD_FOUNDRY_EMAIL + " " + CLOUD_FOUNDRY_PASSWORD + " " + CLOUD_FOUNDRY_TARGET);
         cloudFoundryClient.login();
 
         CloudService cloudService = getCloudService(cloudFoundryClient, serviceName, serviceType);
