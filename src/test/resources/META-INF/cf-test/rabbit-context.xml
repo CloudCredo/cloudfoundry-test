@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:cloud="http://schema.cloudfoundry.org/spring"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+             http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+             http://schema.cloudfoundry.org/spring http://schema.cloudfoundry.org/spring/cloudfoundry-spring.xsd">
+
+
+    <cloud:rabbit-connection-factory id="rabbitConnectionFactory"/>
+    <!--suppress RequiredBeanTypeInspection -->
+    <rabbit:admin connection-factory="rabbitConnectionFactory" />
+    <rabbit:template id="rabbitTemplate" connection-factory="rabbitConnectionFactory"/>
+
+</beans:beans>
