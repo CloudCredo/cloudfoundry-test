@@ -25,6 +25,12 @@ class EnvironmentVariables {
      * @return
      */
     public static String getEnv(String key, String defaultValue) {
+
+        System.getProperties().list(System.out);
+        for (String s : System.getenv().keySet()) {
+            System.out.println(s);
+        }
+
         String value = System.getenv().get(key);
         return value == null ? defaultValue : value;
     }
