@@ -19,10 +19,11 @@ class EnvironmentVariables {
     private static final Logger log = LoggerFactory.getLogger(EnvironmentVariables.class);
 
     /**
+     * Returns an environments variable or the provided default value if key does not exist.
      *
-     * @param key
-     * @param defaultValue
-     * @return
+     * @param key          the key of the environment variable
+     * @param defaultValue to be returned if key does not exist
+     * @return an environments variable or the provided default value if key does not exist.
      */
     public static String getEnv(String key, String defaultValue) {
         String value = System.getenv().get(key);
@@ -41,7 +42,7 @@ class EnvironmentVariables {
         execute(new Command() {
             @Override
             public void execute(Map<String, String> environment) {
-                if(environment.containsKey(key)) {
+                if (environment.containsKey(key)) {
                     EnvironmentVariables.this.remove(key);
                 }
                 log.debug("Adding environment variable: " + key + " " + value);
@@ -50,6 +51,11 @@ class EnvironmentVariables {
         });
     }
 
+    /**
+     * Removes and environment variable
+     *
+     * @param key   the key of the environment variable
+     */
     public void remove(final String key) {
         execute(new Command() {
             @Override
@@ -82,5 +88,4 @@ class EnvironmentVariables {
     private static interface Command {
         void execute(Map<String, String> environment);
     }
-
 }
