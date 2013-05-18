@@ -52,7 +52,13 @@ class NatsCloudFoundryServicesClient {
         final AtomicReference<Credentials> credentialsAtomicReference = new AtomicReference<Credentials>();
         final CountDownLatch latch = new CountDownLatch(1);
 
+        log.info("Connecting to NATS on: " + NATS_URL);
         final Nats nats = new NatsConnector().addHost(NATS_URL).connect();
+
+        if(nats.isClosed()) {
+            throw new RuntimeException("Cannot connect to NATS: " + NATS_URL);
+        }
+
         //Subscribe to all...
         final Subscription subscription = nats.subscribe(">");
 
@@ -145,7 +151,7 @@ class NatsCloudFoundryServicesClient {
     private void newService(CloudFoundryClient cloudFoundryClient, CloudService cloudService) {
         for (int i = 0; i < 3; i++) {
             try {
-                log.info("Creating new Cloud Service: " + cloudService.getLabel());
+                log.info("Creating new Cloud Service: " + cloudService.getName());
                 cloudFoundryClient.createService(cloudService);
                 return;
             } catch (HttpServerErrorException e) {
