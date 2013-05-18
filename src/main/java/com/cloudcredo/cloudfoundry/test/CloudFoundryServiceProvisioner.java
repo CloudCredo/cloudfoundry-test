@@ -53,8 +53,16 @@ public class CloudFoundryServiceProvisioner {
     private Credentials createService(CloudFoundryService cloudFoundryService) {
         try {
             log.info("Creating new " + cloudFoundryService.serviceName + " Cloud Foundry Service");
-            return natsCloudFoundryServicesClient.getCredentialsForNewService(cloudFoundryService.serviceName + "-test",
+            Credentials credentials = natsCloudFoundryServicesClient.getCredentialsForNewService(cloudFoundryService.serviceName + "-test",
                     cloudFoundryService);
+
+            if (credentials == null) {
+                //TODO introduce retry
+                throw new RuntimeException("Unable to create Credentials for service. Cannot recover");
+            } else {
+                return credentials;
+            }
+
         } catch (InterruptedException e) {
             throw new RuntimeException("Cannot Create " + cloudFoundryService.serviceName + " Service");
         }

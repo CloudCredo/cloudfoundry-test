@@ -19,6 +19,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.cloudcredo.cloudfoundry.test.EnvironmentVariables.getEnv;
+
 /**
  * Provides functionality to create and return generated credential for Cloud Foundry services.
  *
@@ -29,15 +31,15 @@ class NatsCloudFoundryServicesClient {
 
     private static final Logger log = LoggerFactory.getLogger(NatsCloudFoundryServicesClient.class);
 
-    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chris@cloudcredo.com");
+    private static final String CLOUD_FOUNDRY_EMAIL = getEnv("cloud_foundry_email", "chris@cloudcredo.com");
 
-    private static final String CLOUD_FOUNDRY_PASSWORD = EnvironmentVariables.getEnv("cloud_foundry_password", "c1oudc0w");
+    private static final String CLOUD_FOUNDRY_PASSWORD = getEnv("cloud_foundry_password", "c1oudc0w");
 
     /** The Cloud Foundry Nats URL */
-    private final String NATS_URL = EnvironmentVariables.getEnv("mbus", "nats://nats:nats@api.vcap.me:4222");
+    private final String NATS_URL = getEnv("mbus", "nats://nats:nats@api.vcap.me:4222");
 
     /** Cloud foundry Target */
-    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.vcap.me");
+    private final String CLOUD_FOUNDRY_TARGET = getEnv("target", "http://api.vcap.me");
 
     /**
      * Connects to the instance of Cloud Foundry as defined in TargetUrl, creates a new service, constructs and returns
@@ -54,12 +56,6 @@ class NatsCloudFoundryServicesClient {
 
         log.info("Connecting to NATS on: " + NATS_URL);
         final Nats nats = new NatsConnector().addHost(NATS_URL).connect();
-
-        if (nats.isClosed()) {
-            throw new RuntimeException("Cannot connect to NATS: " + NATS_URL);
-        } else if (nats.isConnected()) {
-            log.info("Nats Connected");
-        }
 
         //Subscribe to all...
         final Subscription subscription = nats.subscribe(">");
@@ -108,14 +104,8 @@ class NatsCloudFoundryServicesClient {
             }
         });
 
-        try {
-            newService(serviceName, service.serviceName);
-            latch.await(5000, TimeUnit.MILLISECONDS);
-            //Thread.sleep(50000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        newService(serviceName, service.serviceName);
+        latch.await(5000, TimeUnit.MILLISECONDS);
         closeNats(nats);
 
         return credentialsAtomicReference.get();
@@ -129,9 +119,9 @@ class NatsCloudFoundryServicesClient {
     /*
      * Creates a new Cloud Foundry service
      */
-    private void newService(String serviceName, String serviceType) throws MalformedURLException {
+    private void newService(String serviceName, String serviceType) {
         log.info("Requesting new Cloud Foundry service for " + serviceType);
-        URL target = new URL(CLOUD_FOUNDRY_TARGET);
+        URL target = getCloudFoundryURL();
         CloudCredentials cloudCredentials = new CloudCredentials(CLOUD_FOUNDRY_EMAIL, CLOUD_FOUNDRY_PASSWORD);
         CloudFoundryClient cloudFoundryClient = new CloudFoundryClient(cloudCredentials, target);
         log.info(CLOUD_FOUNDRY_EMAIL + " " + CLOUD_FOUNDRY_PASSWORD + " " + CLOUD_FOUNDRY_TARGET);
@@ -145,6 +135,14 @@ class NatsCloudFoundryServicesClient {
             deleteService(cloudFoundryClient, cloudService);
         }
         newService(cloudFoundryClient, cloudService);
+    }
+
+    private URL getCloudFoundryURL() {
+        try {
+            return new URL(CLOUD_FOUNDRY_TARGET);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(CLOUD_FOUNDRY_TARGET + " is not a valid URL format", e);
+        }
     }
 
     /*
