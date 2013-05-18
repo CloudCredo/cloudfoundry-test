@@ -11,7 +11,7 @@ import java.net.URL;
  * @author: chris
  * @date: 11/05/2013
  */
-public class Login {
+public class LoginTest {
 
     @Test
     public void login() throws MalformedURLException {
