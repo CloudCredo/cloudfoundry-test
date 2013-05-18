@@ -5,6 +5,9 @@ package com.cloudcredo.cloudfoundry.test;
  * @date: 29/04/2013
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 
 /**
@@ -12,6 +15,8 @@ import java.util.Map;
  * environment variables that the CloudFoundry Springframework support requires to run (VCAP_SERVICES)
  */
 class CloudFoundryEnvironmentAdapter {
+
+    private  static final Logger log = LoggerFactory.getLogger(CloudFoundryEnvironmentAdapter.class);
 
     /**
      * Allows us to set the Environment Variables expected by the Cloud Foundry Spring plugins for the running Java
@@ -29,7 +34,11 @@ class CloudFoundryEnvironmentAdapter {
         StringBuilder ret = new StringBuilder("{");
         for (CloudFoundryService cloudFoundryService : template.keySet()) {
 
+            log.info("looking for Credentials for service " + cloudFoundryService);
             Credentials credentials = template.get(cloudFoundryService);
+            log.info("Found for Credentials for service " + credentials);
+
+
             String serviceName = cloudFoundryService.serviceName;
             String serviceVersion = cloudFoundryService.serviceVersion;
             String label = String.format("%s-%s", serviceName, serviceVersion);

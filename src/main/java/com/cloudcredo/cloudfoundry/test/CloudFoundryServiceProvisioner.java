@@ -53,7 +53,8 @@ public class CloudFoundryServiceProvisioner {
     private Credentials createService(CloudFoundryService cloudFoundryService) {
         try {
             log.info("Creating new " + cloudFoundryService.serviceName + " Cloud Foundry Service");
-            return natsCloudFoundryServicesClient.getCredentialsForNewService("mongodb-test", cloudFoundryService);
+            return natsCloudFoundryServicesClient.getCredentialsForNewService(cloudFoundryService.serviceName + "-test",
+                    cloudFoundryService);
         } catch (InterruptedException e) {
             throw new RuntimeException("Cannot Create " + cloudFoundryService.serviceName + " Service");
         }
