@@ -29,7 +29,7 @@ class NatsCloudFoundryServicesClient {
 
     private static final Logger log = LoggerFactory.getLogger(NatsCloudFoundryServicesClient.class);
 
-    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chris@cloudcredo.com");
+    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chrus@cloudcredo.com");
 
     private static final String CLOUD_FOUNDRY_PASSWORD = EnvironmentVariables.getEnv("cloud_foundry_password", "c1oudc0w");
 
@@ -37,7 +37,7 @@ class NatsCloudFoundryServicesClient {
     private final String NATS_URL = EnvironmentVariables.getEnv("mbus", "nats://nats:nats@api.vcap.me:4222");
 
     /** Cloud foundry Target */
-    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.vcap.me");
+    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.cloudfoundry.postoffice.test");
 
     /**
      * Connects to the instance of Cloud Foundry as defined in TargetUrl, creates a new service, constructs and returns
@@ -56,7 +56,6 @@ class NatsCloudFoundryServicesClient {
         //Subscribe to all...
         final Subscription subscription = nats.subscribe(">");
 
-        //Rabbit Message Handler
         subscription.addMessageHandler(new MessageHandler() {
             Boolean name = false;
 
@@ -65,7 +64,6 @@ class NatsCloudFoundryServicesClient {
                 log.debug("Received message with Subject: " + message.getSubject() + " :: Body:" + message.getBody());
 
 
-                //TODO New message handler for rabbit bind
                 if (message.getSubject().startsWith(service.newServiceMessageSubjectName)) {
                     log.info("Received message to listen for credentials for new " + service.serviceName + " service");
                     name = true;
@@ -121,7 +119,7 @@ class NatsCloudFoundryServicesClient {
     }
 
     /*
-     * Creates a new RabbitMQCloudFoundryService service
+     * Creates a new Cloud Foundry service
      */
     private void newService(String serviceName, String serviceType) throws MalformedURLException {
         log.info("Requesting new Cloud Foundry service for " + serviceType);
@@ -156,9 +154,10 @@ class NatsCloudFoundryServicesClient {
     }
 
     /**
-     * @param cloudFoundryClient to get the RabbitMQCloudFoundryService service configurations from.
+     * @param cloudFoundryClient to get the service configurations from.
      * @param serviceName
-     * @param serviceType        to create  @return a CloudService for rabbitMq
+     * @param serviceType        to create
+     * @return a CloudService
      */
 
     private CloudService getCloudService(CloudFoundryClient cloudFoundryClient, String serviceName, String serviceType) {

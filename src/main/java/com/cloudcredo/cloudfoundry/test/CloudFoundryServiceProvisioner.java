@@ -1,5 +1,6 @@
 package com.cloudcredo.cloudfoundry.test;
 
+import com.cloudcredo.cloudfoundry.test.annotation.MongoDbCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RabbitMQCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RedisCloudFoundryService;
 import org.slf4j.Logger;
@@ -26,47 +27,35 @@ public class CloudFoundryServiceProvisioner {
     private NatsCloudFoundryServicesClient natsCloudFoundryServicesClient = new NatsCloudFoundryServicesClient();
 
     /**
-     * Creates a RabbitMQ service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment
-     * variables as required by Spring for auto-connect functionality.
-     */
-    private Credentials createRabbitMqService() {
-        try {
-            log.info("Creating new RabbitMQ Cloud Foundry Service");
-            return natsCloudFoundryServicesClient.getCredentialsForNewService("rabbit-test", CloudFoundryService.RABBITMQ);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Cannot Create RabbitMQ Service");
-        }
-    }
-
-    /**
-     * Creates a Redis service in the target instance of Cloud Foundry and sets the VCAP_SERVICES environment variables
-     * as required by Spring for auto-connect functionality.
-     */
-    private Credentials createRedisService() {
-        try {
-            log.info("Creating new Redis Cloud Foundry Service");
-            return natsCloudFoundryServicesClient.getCredentialsForNewService("redis-test", CloudFoundryService.REDIS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Cannot Create Redis Service");
-        }
-    }
-
-    /**
-     * Looks for the Service annotations on the test class and creates a service for each found mixin interface.
+     * Looks for the Service annotations on the test class and creates a service for each found.
      *
      * @param clazz Class to look for presence of annotations on.
      * @see com.cloudcredo.cloudfoundry.test.annotation
      */
     void createServicesForClass(Class clazz) {
         Map<CloudFoundryService, Credentials> credentials = new HashMap<CloudFoundryService, Credentials>();
+
         if (clazz.isAnnotationPresent(RabbitMQCloudFoundryService.class)) {
-            credentials.put(CloudFoundryService.RABBITMQ, createRabbitMqService());
+            credentials.put(CloudFoundryService.RABBITMQ, createService(CloudFoundryService.RABBITMQ));
         }
 
         if (clazz.isAnnotationPresent(RedisCloudFoundryService.class)) {
-            credentials.put(CloudFoundryService.REDIS, createRedisService());
+            credentials.put(CloudFoundryService.REDIS, createService(CloudFoundryService.REDIS));
+        }
+
+        if (clazz.isAnnotationPresent(MongoDbCloudFoundryService.class)) {
+            credentials.put(CloudFoundryService.MONGODB, createService(CloudFoundryService.MONGODB));
         }
 
         cloudFoundryEnvironmentAdapter.addVcapServices(credentials);
+    }
+
+    private Credentials createService(CloudFoundryService cloudFoundryService) {
+        try {
+            log.info("Creating new " + cloudFoundryService.serviceName + " Cloud Foundry Service");
+            return natsCloudFoundryServicesClient.getCredentialsForNewService("mongodb-test", cloudFoundryService);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Cannot Create " + cloudFoundryService.serviceName + " Service");
+        }
     }
 }

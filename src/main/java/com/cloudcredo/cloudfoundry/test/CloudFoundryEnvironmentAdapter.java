@@ -55,6 +55,6 @@ class CloudFoundryEnvironmentAdapter {
             ret.append(json);
         }
         String t = ret.toString();
-        return t.substring(0, t.length()-1)+"}";
+        return t.substring(0, t.length() - 1) + "}";   //Clean up the JSON
     }
 }
