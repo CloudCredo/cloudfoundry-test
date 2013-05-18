@@ -29,7 +29,7 @@ class NatsCloudFoundryServicesClient {
 
     private static final Logger log = LoggerFactory.getLogger(NatsCloudFoundryServicesClient.class);
 
-    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chrus@cloudcredo.com");
+    private static final String CLOUD_FOUNDRY_EMAIL = EnvironmentVariables.getEnv("cloud_foundry_email", "chris@cloudcredo.com");
 
     private static final String CLOUD_FOUNDRY_PASSWORD = EnvironmentVariables.getEnv("cloud_foundry_password", "c1oudc0w");
 
@@ -37,7 +37,7 @@ class NatsCloudFoundryServicesClient {
     private final String NATS_URL = EnvironmentVariables.getEnv("mbus", "nats://nats:nats@api.vcap.me:4222");
 
     /** Cloud foundry Target */
-    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.cloudfoundry.postoffice.test");
+    private final String CLOUD_FOUNDRY_TARGET = EnvironmentVariables.getEnv("target", "http://api.vcap.me");
 
     /**
      * Connects to the instance of Cloud Foundry as defined in TargetUrl, creates a new service, constructs and returns
@@ -145,6 +145,7 @@ class NatsCloudFoundryServicesClient {
     private void newService(CloudFoundryClient cloudFoundryClient, CloudService cloudService) {
         for (int i = 0; i < 3; i++) {
             try {
+                log.info("Creating new Cloud Service: " + cloudService.getLabel());
                 cloudFoundryClient.createService(cloudService);
                 return;
             } catch (HttpServerErrorException e) {
