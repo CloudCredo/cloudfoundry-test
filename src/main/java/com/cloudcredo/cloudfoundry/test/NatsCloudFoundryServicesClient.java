@@ -57,6 +57,8 @@ class NatsCloudFoundryServicesClient {
 
         if(nats.isClosed()) {
             throw new RuntimeException("Cannot connect to NATS: " + NATS_URL);
+        } else if (nats.isConnected()) {
+            log.info("Nats Connected");
         }
 
         //Subscribe to all...
@@ -67,7 +69,7 @@ class NatsCloudFoundryServicesClient {
 
             public void onMessage(Message message) {
 
-                log.debug("Received message with Subject: " + message.getSubject() + " :: Body:" + message.getBody());
+                log.info("Received message with Subject: " + message.getSubject() + " :: Body:" + message.getBody());
 
 
                 if (message.getSubject().startsWith(service.newServiceMessageSubjectName)) {
