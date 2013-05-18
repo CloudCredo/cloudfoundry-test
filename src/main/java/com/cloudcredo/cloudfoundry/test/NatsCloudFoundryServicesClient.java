@@ -55,7 +55,7 @@ class NatsCloudFoundryServicesClient {
         log.info("Connecting to NATS on: " + NATS_URL);
         final Nats nats = new NatsConnector().addHost(NATS_URL).connect();
 
-        if(nats.isClosed()) {
+        if (nats.isClosed()) {
             throw new RuntimeException("Cannot connect to NATS: " + NATS_URL);
         } else if (nats.isConnected()) {
             log.info("Nats Connected");
@@ -81,13 +81,13 @@ class NatsCloudFoundryServicesClient {
                 if (name && message.getSubject().startsWith("_INBOX")) {
                     try {
                         Credentials foundCreds = getCredentials(message.getBody());
-                        if (foundCreds.getNodeId().equals(service.serviceNode)) {
+                        if (foundCreds.getNodeId().startsWith(service.serviceNode)) {
                             log.info("Received expected _INBOX message for " + foundCreds.getNodeId());
                             credentialsAtomicReference.set(foundCreds);
                             log.info("Credentials " + foundCreds + " set.");
                         } else {
                             log.warn("Received expected _INBOX message for " + foundCreds.getNodeId()
-                                    + "but was expecting "
+                                    + " but was expecting "
                                     + service.serviceNode);
                         }
                     } catch (Exception e) {
