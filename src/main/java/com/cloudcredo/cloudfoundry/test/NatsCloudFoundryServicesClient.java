@@ -142,9 +142,24 @@ class NatsCloudFoundryServicesClient {
         //Could pull this out in to a wrapped CloudFoundryService
         if (serviceExists(cloudFoundryClient, serviceName)) {
             log.warn("Service " + serviceName + " already exists. Deleting existing service. All existing data will be lost");
-            cloudFoundryClient.deleteService(cloudService.getName());
+            deleteService(cloudFoundryClient, cloudService);
         }
         newService(cloudFoundryClient, cloudService);
+    }
+
+    /*
+     * Rudimentary retry to catch service gateway 502 errors.
+     */
+    private void deleteService(CloudFoundryClient cloudFoundryClient, CloudService cloudService) {
+        for (int i = 0; i < 3; i++) {
+            try {
+                log.info("Deleting existing Cloud Service: " + cloudService.getName());
+                cloudFoundryClient.deleteService(cloudService.getName());
+                return;
+            } catch (HttpServerErrorException e) {
+                log.warn("Encountered 502 Bad Gateway error. Will try again");
+            }
+        }
     }
 
     /*
