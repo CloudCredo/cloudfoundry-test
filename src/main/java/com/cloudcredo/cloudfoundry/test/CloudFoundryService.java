@@ -2,7 +2,7 @@ package com.cloudcredo.cloudfoundry.test;
 
 public enum CloudFoundryService {
 
-    RABBITMQ("rabbitmq", "rabbit_node", "RMQaaS.provision.rabbit_node_free", "2.4"),
+    RABBITMQ("rabbitmq", "RMQaaS.provision.rabbit_node", "RMQaaS.provision.rabbit_node_free", "2.4"),
     REDIS("redis", "redis_node", "RaaS.provision.redis_node_0", "1.8"),
     MONGODB("mongodb", "mongodb_node", "RaaS.provision.mongodb_node_0", "2.8");
 
