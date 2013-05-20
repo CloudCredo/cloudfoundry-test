@@ -1,11 +1,14 @@
 package com.cloudcredo.cloudfoundry.test;
 
+import com.cloudcredo.cloudfoundry.test.annotation.CassandraCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.MongoDbCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RabbitMQCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RedisCloudFoundryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +50,10 @@ public class CloudFoundryServiceProvisioner {
             credentials.put(CloudFoundryService.MONGODB, createService(CloudFoundryService.MONGODB));
         }
 
+        if (clazz.isAnnotationPresent(CassandraCloudFoundryService.class)) {
+            credentials.put(CloudFoundryService.CASSANDRA, createService(CloudFoundryService.CASSANDRA));
+        }
+
         cloudFoundryEnvironmentAdapter.addVcapServices(credentials);
     }
 
@@ -60,11 +67,38 @@ public class CloudFoundryServiceProvisioner {
                 //TODO introduce retry
                 throw new RuntimeException("Unable to create Credentials for service. Cannot recover");
             } else {
+                checkPortAndService(credentials);
                 return credentials;
             }
 
+
         } catch (InterruptedException e) {
             throw new RuntimeException("Cannot Create " + cloudFoundryService.serviceName + " Service");
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot Create " + cloudFoundryService.serviceName + " " +
+                    "Service. Credentials were created but it is not serving on the provided host and port");
         }
+    }
+
+    private void checkPortAndService(Credentials credentials) throws IOException {
+        log.info("Checking Host and Port are available");
+        int sleepTime = 1000;
+        for (int i = 0; i < 5; i++) {
+            try {
+                Socket socket = new Socket(credentials.getHost(), Integer.valueOf(credentials.getPort()));
+                if (socket.isConnected()) {
+                    socket.close();
+                }
+            } catch (Exception e) {
+                log.info(String.format("Service not available. Will try again in %s seconds", sleepTime));
+                try {
+                    Thread.sleep(sleepTime);
+                    sleepTime = sleepTime * 2;
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        log.info("Service now available");
     }
 }

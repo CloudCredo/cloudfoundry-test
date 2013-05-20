@@ -154,6 +154,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Cassandra -->
+        <dependency>
+            <groupId>com.netflix.astyanax</groupId>
+            <artifactId>astyanax</artifactId>
+            <version>1.56.37</version>
+        </dependency>
+
+
 
     </dependencies>
 

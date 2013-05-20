@@ -76,7 +76,7 @@ class NatsCloudFoundryServicesClient {
                 //TODO new message handler for inbox
                 if (name && message.getSubject().startsWith("_INBOX")) {
                     try {
-                        Credentials foundCreds = getCredentials(message.getBody());
+                        Credentials foundCreds = getCredentials(message.getBody(), service);
                         if (foundCreds.getNodeId().startsWith(service.serviceNode)) {
                             log.info("Received expected _INBOX message for " + foundCreds.getNodeId());
                             credentialsAtomicReference.set(foundCreds);
@@ -87,7 +87,7 @@ class NatsCloudFoundryServicesClient {
                                     + service.serviceNode);
                         }
                     } catch (Exception e) {
-                        log.warn("Not yet Received Credentials: " + message.getSubject());
+                        log.warn("Not yet Received Credentials: " + message.getSubject(), e);
                     }
 
                 }
@@ -229,8 +229,15 @@ class NatsCloudFoundryServicesClient {
      * @return a Credentials object build up from the contents of body
      * @throws IOException
      */
-    private Credentials getCredentials(String body) throws IOException {
-        JsonNode credentials = new ObjectMapper().readTree(body).get("credentials");
-        return new ObjectMapper().readValue(credentials, Credentials.class);
+    private Credentials getCredentials(String body, CloudFoundryService cloudFoundryService) throws IOException {
+        JsonNode credentialsJsonNode = new ObjectMapper().readTree(body).get("credentials");
+        Credentials credentials = new ObjectMapper().readValue(credentialsJsonNode, Credentials.class);
+
+        //Sadly the CloudFoudnry MongoDB VCAP env var is in a different form to the other services so we need
+        //to override the name to that of our test service name (This logic should not live here tho).
+        if(cloudFoundryService.serviceName.equals("mongodb")) {
+            credentials.setName("mongodb-test");
+        }
+        return credentials;
     }
 }

@@ -20,6 +20,25 @@ class Credentials {
     private String passwd;
     private String password;
     private String host;
+    private String db;
+    private String cluster_name;
+
+    public void setCluster_name(String cluster_name) {
+        this.cluster_name = cluster_name;
+    }
+
+    public String getCluster_name() {
+        return cluster_name;
+    }
+
+    public String getDb() {
+        return db;
+    }
+
+    public void setDb(String db) {
+        this.db = db;
+    }
+
 
     public String getNodeId() {
         return nodeId;
@@ -38,7 +57,7 @@ class Credentials {
     }
 
     public String getPassword() {
-        return password;
+        return password == null ? passwd : password;
     }
 
     void setPassword(String password) {
@@ -60,10 +79,6 @@ class Credentials {
 
     void setVhost(String vhost) {
         this.vhost = vhost;
-    }
-
-    public String getPasswd() {
-        return passwd;
     }
 
     void setPasswd(String passwd) {
@@ -94,10 +109,6 @@ class Credentials {
         this.username = username;
     }
 
-    public String getPass() {
-        return pass;
-    }
-
     void setPass(String pass) {
         this.pass = pass;
     }
@@ -125,7 +136,7 @@ class Credentials {
                 ", hostname='" + hostname + '\'' +
                 ", port='" + port + '\'' +
                 ", username='" + username + '\'' +
-                ", pass='" + pass + '\'' +
+                ", pass='" + getPassword() + '\'' +
                 ", url='" + url + '\'' +
                 '}';
     }

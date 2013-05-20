@@ -30,6 +30,12 @@ class EnvironmentVariables {
         return value == null ? defaultValue : value;
     }
 
+
+    public static boolean contains(String key) {
+        String value = System.getenv().get(key);
+        return value != null;
+    }
+
     /**
      * Hack to set the environment variable HashMap in the system class. Allows us to set the VCAP_SERVICES environment
      * variable that the AbstractServiceInfo classes require.

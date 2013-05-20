@@ -57,6 +57,7 @@ class CloudFoundryEnvironmentAdapter {
                     "            \"user\":\"" + credentials.getUser() + "\",\n" +
                     "            \"username\":\"" + credentials.getUsername() + "\",\n" +
                     "            \"password\":\"" + credentials.getPassword() + "\",\n" +
+                    "            \"db\":\"" + credentials.getDb() + "\",\n" +
                     "            \"url\":\"" + credentials.getUrl() + "\"\n" +
                     "        }\n" +
                     "    }\n" +

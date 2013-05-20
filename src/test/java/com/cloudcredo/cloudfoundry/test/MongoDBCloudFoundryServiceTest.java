@@ -2,7 +2,6 @@ package com.cloudcredo.cloudfoundry.test;
 
 import com.cloudcredo.cloudfoundry.test.annotation.MongoDbCloudFoundryService;
 import org.fest.assertions.Assertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(CloudFoundryJUnitClassRunner.class)
 @ContextConfiguration("classpath:META-INF/cf-test/mongodb-context.xml")
 @MongoDbCloudFoundryService
-@Ignore
 public class MongoDBCloudFoundryServiceTest {
 
     @Autowired
@@ -27,5 +25,4 @@ public class MongoDBCloudFoundryServiceTest {
         mongoTemplate.createCollection(DomainObject.class);
         Assertions.assertThat(mongoTemplate.collectionExists(DomainObject.class)).isTrue();
     }
-
 }

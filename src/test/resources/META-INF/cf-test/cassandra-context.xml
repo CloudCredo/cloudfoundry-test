@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cloud="http://schema.cloudfoundry.org/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://schema.cloudfoundry.org/spring http://schema.cloudfoundry.org/spring/cloudfoundry-spring.xsd">
+
+    <cloud:properties id="cloudProperties" />
+    <context:property-placeholder properties-ref="cloudProperties" />
+
+    <bean id="cassandraConnectionPoolConfiguration"
+          class="com.netflix.astyanax.connectionpool.impl.ConnectionPoolConfigurationImpl">
+        <constructor-arg value="testConnectionPool" />
+        <property name="port" value="${cloud.services.cassandra.connection.port}"/>
+        <property name="seeds" value="${cloud.services.cassandra.connection.host}"/>
+        <property name="maxConnsPerHost" value="1"/>
+    </bean>
+
+</beans>

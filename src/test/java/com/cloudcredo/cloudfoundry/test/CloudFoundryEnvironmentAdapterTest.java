@@ -43,8 +43,17 @@ public class CloudFoundryEnvironmentAdapterTest {
         t.put(CloudFoundryService.REDIS, testCredentials);
         unit.addVcapServices(t);
         String actual = System.getenv().get("VCAP_SERVICES");
-        System.out.println(testCredentials);
         Assertions.assertThat(actual).isEqualTo(expectedJson(testCredentials, "redis-1.8", "redis"));
+    }
+
+    @Test
+    public void shouldSetMongoDb() {
+        Credentials testCredentials = getTestCredentials();
+        Map<CloudFoundryService, Credentials> t = new HashMap<CloudFoundryService, Credentials>();
+        t.put(CloudFoundryService.MONGODB, testCredentials);
+        unit.addVcapServices(t);
+        String actual = System.getenv().get("VCAP_SERVICES");
+        Assertions.assertThat(actual).isEqualTo(expectedJson(testCredentials, "mongodb-2.8", "mongodb"));
     }
 
     private Credentials getTestCredentials() {
@@ -57,6 +66,7 @@ public class CloudFoundryEnvironmentAdapterTest {
         String expectedPort = "8080";
         String expectedUrl = "url";
         String expectedVhost = "vhost";
+        String expectedDb = "db";
 
         Credentials c = new Credentials();
         c.setUsername(expectedUserName);
@@ -64,6 +74,7 @@ public class CloudFoundryEnvironmentAdapterTest {
         c.setUsername(expectedUserName);
         c.setHost(expectedHost);
         c.setHostname(expectedHost);
+        c.setDb(expectedDb);
         c.setName(expectedName);
         c.setNode_id(expectedNodeId);
         c.setPass(expectedPassword);
@@ -90,6 +101,7 @@ public class CloudFoundryEnvironmentAdapterTest {
                 "            \"user\":\"" + credentials.getUser() + "\",\n" +
                 "            \"username\":\"" + credentials.getUsername() + "\",\n" +
                 "            \"password\":\"" + credentials.getPassword() + "\",\n" +
+                "            \"db\":\"" + credentials.getDb() + "\",\n" +
                 "            \"url\":\"" + credentials.getUrl() + "\"\n" +
                 "        }\n" +
                 "    }\n" +
