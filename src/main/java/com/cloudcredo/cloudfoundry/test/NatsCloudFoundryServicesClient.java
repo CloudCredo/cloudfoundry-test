@@ -3,6 +3,7 @@ package com.cloudcredo.cloudfoundry.test;
 import nats.client.*;
 import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
+import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.domain.CloudService;
 import org.cloudfoundry.client.lib.domain.ServiceConfiguration;
 import org.codehaus.jackson.JsonNode;
@@ -24,8 +25,7 @@ import static com.cloudcredo.cloudfoundry.test.EnvironmentVariables.getEnv;
 /**
  * Provides functionality to create and return generated credential for Cloud Foundry services.
  *
- * @author: chris
- * @date: 28/04/2013
+ * @author chris
  */
 class NatsCloudFoundryServicesClient {
 
@@ -74,7 +74,8 @@ class NatsCloudFoundryServicesClient {
                 }
 
                 //TODO new message handler for inbox
-                if (name && message.getSubject().startsWith("_INBOX")) {
+                if (name && message.getSubject().startsWith("_INBOX") && message.getBody() != null) {
+                    System.out.println(message.getBody());
                     try {
                         Credentials foundCreds = getCredentials(message.getBody(), service);
                         if (foundCreds.getNodeId().startsWith(service.serviceNode)) {
@@ -152,11 +153,19 @@ class NatsCloudFoundryServicesClient {
         for (int i = 0; i < 3; i++) {
             try {
                 log.info("Deleting existing Cloud Service: " + cloudService.getName());
-                cloudFoundryClient.deleteService(cloudService.getName());
+                deleteRawService(cloudFoundryClient, cloudService);
                 return;
             } catch (HttpServerErrorException e) {
                 log.warn("Encountered 502 Bad Gateway error. Will try again");
             }
+        }
+    }
+
+    private void deleteRawService(CloudFoundryClient cloudFoundryClient, CloudService cloudService) {
+        try {
+            cloudFoundryClient.deleteService(cloudService.getName());
+        } catch (CloudFoundryException e) {
+            log.warn("Could not delete service as expected.", e);
         }
     }
 
@@ -235,7 +244,7 @@ class NatsCloudFoundryServicesClient {
 
         //Sadly the CloudFoudnry MongoDB VCAP env var is in a different form to the other services so we need
         //to override the name to that of our test service name (This logic should not live here tho).
-        if(cloudFoundryService.serviceName.equals("mongodb")) {
+        if (cloudFoundryService.serviceName.equals("mongodb")) {
             credentials.setName("mongodb-test");
         }
         return credentials;

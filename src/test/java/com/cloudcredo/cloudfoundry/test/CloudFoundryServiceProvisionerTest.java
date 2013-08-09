@@ -1,6 +1,7 @@
 package com.cloudcredo.cloudfoundry.test;
 
 import com.cloudcredo.cloudfoundry.test.annotation.CassandraCloudFoundryService;
+import com.cloudcredo.cloudfoundry.test.annotation.MongoDbCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RabbitMQCloudFoundryService;
 import com.cloudcredo.cloudfoundry.test.annotation.RedisCloudFoundryService;
 import org.fest.assertions.Assertions;
@@ -15,6 +16,7 @@ import org.junit.Test;
 @RabbitMQCloudFoundryService
 @CassandraCloudFoundryService
 @RedisCloudFoundryService
+@MongoDbCloudFoundryService
 public class CloudFoundryServiceProvisionerTest {
 
     private CloudFoundryServiceProvisioner unit;
@@ -39,6 +41,7 @@ public class CloudFoundryServiceProvisionerTest {
         Assertions.assertThat(actual)
                 .contains(CloudFoundryService.CASSANDRA.serviceName)
                 .contains(CloudFoundryService.REDIS.serviceName)
+                .contains(CloudFoundryService.MONGODB.serviceName)
                 .contains(CloudFoundryService.RABBITMQ.serviceName);
     }
 }
