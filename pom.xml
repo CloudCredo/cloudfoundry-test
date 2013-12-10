@@ -18,9 +18,8 @@
 
     <repositories>
         <repository>
-            <id>spring-release</id>
-            <name>Spring Maven Release Repository</name>
-            <url>http://repo.springsource.org/libs-release</url>
+            <id>spring-milestone</id>
+            <url>http://repo.springsource.org/milestone/</url>
         </repository>
     </repositories>
 
@@ -73,12 +72,12 @@
         <dependency>
             <groupId>com.github.mheath</groupId>
             <artifactId>nats-client-spring</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.Beta4</version>
         </dependency>
         <dependency>
             <groupId>com.github.mheath</groupId>
             <artifactId>nats-client</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5.Beta4</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
